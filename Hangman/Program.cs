@@ -64,13 +64,29 @@
                 }
                 else
                 {
+                    // Guess for the whole word. If the guess is correct player wins the game and the whole word is revealed. If the word is incorrect nothing should get revealed.
+                    if (inputGuess == hiddenWord)
+                    {
+                        GuessWord(hiddenWord);
+                        return false;
+                    }
+                    else
+                    {
                         return true;
+                    }
                 }
             }
             else
             {
                 return true;
             }
+        }
+
+        static void GuessWord(string hiddenWord)
+        {
+            Console.WriteLine(hiddenWord);
+            Console.WriteLine("You guessed the right word!");
+            Console.ReadLine();
         }
 
         static void GuessLetter(char inputGuess, string hiddenWord, char[] hiddenLetters)
@@ -104,7 +120,7 @@
 // The player has 10 guesses to complete the word before losing the game.
 // (5) The player can make two type of guesses; letter or word.
 // (4) Guess for a specific letter. If player guess a letter that occurs in the word, the program should update by inserting the letter in the correct position(s).
-// Guess for the whole word. The player type in a word he/she thinks is the word. If the guess is correct player wins the game and the whole word is revealed. If the word is incorrect nothing should get revealed.
+// (6) Guess for the whole word. The player type in a word he/she thinks is the word. If the guess is correct player wins the game and the whole word is revealed. If the word is incorrect nothing should get revealed.
 // If the player guesses the same letter twice, the program will not consume a guess.
 // The incorrect letters the player has guessed, should be put inside a StringBuilder and presented to the player after each guess
 // (3) The correct letters should be put inside a char array. Unrevealed letters need to be represented by a lower dash(_).
