@@ -9,16 +9,23 @@ namespace Hangman
             bool runGame = true;
             while (runGame)
             {
-                runGame = MainMenu();
+                runGame = GameDisplay();
             }
         }
 
-        private static bool MainMenu()
+        private static bool GameDisplay()
         {
-            Console.WriteLine("Type P and press Enter to play.");
-            Console.WriteLine("Type Q and press Enter to quit.");
-            char playOrQuit = char.Parse(Console.ReadLine().ToUpper());
-            if (playOrQuit == 'P')
+            PlayOrQuitText();
+            string playOrQuit = (Console.ReadLine().ToUpper());
+            if (string.IsNullOrEmpty(playOrQuit))
+            {
+                return true;
+            }
+            if (playOrQuit == "Q")
+            {
+                return false;
+            }
+            if (playOrQuit == "P")
             {
                 // Words in an array of strings
                 string[] words = { "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" };
@@ -33,7 +40,7 @@ namespace Hangman
                 char[] hiddenLetters = new char[hiddenWordLength];
 
                 // Unrevealed letters represented by a lower dash(_).
-                StartCondition(hiddenLetters);
+                HideWord(hiddenLetters);
 
                 // The incorrect letters the player has guessed, should be put inside a StringBuilder and presented to the player after each guess
                 StringBuilder flunkedLetters = new StringBuilder();
@@ -44,112 +51,117 @@ namespace Hangman
                     var winCheck = new string(hiddenLetters);
                     if (winCheck == hiddenWord)
                     {
-                        CorrectWordGuess(hiddenWord, hiddenLetters);
+                        CorrectWordText(hiddenWord, hiddenLetters);
                         return true;
                     }
-                    string turnStatus = "ongoing";
-                    while (turnStatus == "ongoing")
+                    GameText(hiddenWord, hiddenLetters, flunkedLetters, usedGuesses);
+
+                    // The player can make two type of guesses; letter or word.
+                    string inputGuess = (Console.ReadLine().ToUpper());
+                    int inputLength = inputGuess.Length;
+                    if (inputLength != 0)
                     {
-                        turnStatus = GameDisplay(hiddenWord, hiddenLetters, flunkedLetters, usedGuesses);
+                        // Guesses a specific letter.
+                        if (inputLength == 1)
+                        {
+                            var usedLetterCheck = new string(hiddenLetters) + flunkedLetters;
+                            if (!usedLetterCheck.Contains(inputGuess))
+                            {
+                                if (hiddenWord.Contains(inputGuess))
+                                {
+                                    // If player guess a letter that occurs in the word, the program update by inserting the letter in the correct position(s).
+                                    GuessLetter(char.Parse(inputGuess), hiddenWord, hiddenLetters);
+                                    usedGuesses--;
+                                }
+                                else
+                                {
+                                    flunkedLetters.Append(inputGuess);
+                                }
+                            }
+                            // If the player guesses the same letter twice, the program will not consume a guess.
+                            else
+                            {
+                                usedGuesses--;
+                            }
+                        }
+                        else
+                        {
+                            if (inputLength == hiddenWord.Length)
+                            {
+                                // Guess for the whole word. If the guess is correct player wins the game and the whole word is revealed. If the word is incorrect nothing should get revealed.
+                                if (inputGuess == hiddenWord)
+                                {
+                                    // Fill hidden letters with the correct hidden word when player guess the right word.
+                                    AllCorrectLetters(hiddenWord, hiddenLetters);
+                                    usedGuesses--;
+                                }
+                            }
+                            else
+                            {
+                                IncorrectLengthText(hiddenWord);
+                                usedGuesses--;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        usedGuesses--;
                     }
                 }
-                Console.WriteLine("");
-                Console.WriteLine("You have no more guesses. Game over! ");
-                Console.WriteLine(""); 
-                Console.WriteLine("");
+                GameOverText();
                 return true;
             }
             else
             {
-                return false;
+                return true;
             }
         }
 
-        private static string GameDisplay(string hiddenWord, char[] hiddenLetters, StringBuilder flunkedLetters, int usedGuesses)
+        static void GameText(string hiddenWord, char[] hiddenLetters, StringBuilder flunkedLetters, int usedGuesses)
         {
             Console.WriteLine(hiddenWord);
             Console.WriteLine("");
-            Console.WriteLine("Used guesses: " + usedGuesses + " out of 10.");
+            Console.WriteLine(" Used guesses: " + usedGuesses + " out of 10.");
             Console.WriteLine("");
-            Console.WriteLine("Incorrect letters: " + flunkedLetters);
+            Console.WriteLine(" Struck out letters: " + flunkedLetters);
             Console.WriteLine("");
-
-            // The player can make two type of guesses; letter or word.
-            Console.Write("You can guess a letter or the hidden word: ");
+            Console.Write(" You can guess a letter or the hidden word: ");
             Console.Write(hiddenLetters);
             Console.WriteLine("");
             Console.WriteLine("");
-            Console.Write("                                           ");
-            string inputGuess = (Console.ReadLine().ToUpper());
-            int inputLength = inputGuess.Length;
-            if (inputLength != 0)
-            {
-                // Guesses a specific letter.
-                if (inputLength == 1)
-                {
-                    var usedLetterCheck = new string(hiddenLetters) + flunkedLetters;
-                    if (!usedLetterCheck.Contains(inputGuess))
-                    {
-                        if (hiddenWord.Contains(inputGuess))
-                        {
-                            // If player guess a letter that occurs in the word, the program update by inserting the letter in the correct position(s).
-                            GuessLetter(char.Parse(inputGuess), hiddenWord, hiddenLetters);
-                            return "completed";
-                        }
-                        else
-                        {
-                            flunkedLetters.Append(inputGuess);
-                            return "completed";
-                        }
-                    }
-                    // If the player guesses the same letter twice, the program will not consume a guess.
-                    else
-                    {
-                        return "ongoing";
-                    }
-                }
-                else
-                {
-                    if (inputLength == hiddenWord.Length)
-                    {
-                        // Guess for the whole word. If the guess is correct player wins the game and the whole word is revealed. If the word is incorrect nothing should get revealed.
-                        if (inputGuess == hiddenWord)
-                        {
-                            // Fill hidden letters with the correct hidden word when player guess the right word.
-                            int i = 0;
-                            foreach (var hiddenWordLetter in hiddenWord)
-                            {
-                                i++;
-                                hiddenLetters[i - 1] = hiddenWordLetter;
-                            }
-                            return "completed";
-                        }
-                        else
-                        {
-                            return "completed";
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("");
-                        Console.WriteLine("It is a " + hiddenWord.Length + " letter word. Try again.");
-                        Console.WriteLine("");
-                        return "ongoing";
-                    }
-                }
-            }
-            else
-            {
-                return "ongoing";
-            }
+            Console.Write("                                            ");
         }
 
-        static void CorrectWordGuess(string hiddenWord, char[] hiddenLetters)
+        static void IncorrectLengthText(string hiddenWord)
         {
             Console.WriteLine("");
-            Console.WriteLine("You got the complete word!                 " + hiddenWord);
+            Console.WriteLine(" Need a " + hiddenWord.Length + " letter word. Try again.");
+            Console.WriteLine("");
+        }
+
+        static void GameOverText()
+        {
+            Console.WriteLine("");
+            Console.WriteLine(" You have no more guesses. Game over! ");
             Console.WriteLine("");
             Console.WriteLine("");
+        }
+
+        static void CorrectWordText(string hiddenWord, char[] hiddenLetters)
+        {
+            Console.WriteLine("");
+            Console.WriteLine(" Winner! You got the complete word:         " + hiddenWord);
+            Console.WriteLine("");
+            Console.WriteLine("");
+        }
+
+        static void PlayOrQuitText()
+        {
+            Console.WriteLine("");
+            Console.WriteLine(" Type P and press Enter to Play.");
+            Console.WriteLine(" Type Q and press Enter to Quit.");
+            Console.WriteLine("");
+            Console.Write(" ");
         }
 
         static void GuessLetter(char inputGuess, string hiddenWord, char[] hiddenLetters)
@@ -163,7 +175,7 @@ namespace Hangman
             }
         }
 
-        static void CorrectLetters(char inputGuess, string hiddenWord, char[] hiddenLetters)
+        static void AllCorrectLetters(string hiddenWord, char[] hiddenLetters)
         {
             int i = 0;
             foreach (var hiddenWordLetter in hiddenWord)
@@ -173,7 +185,7 @@ namespace Hangman
             }
         }
 
-        static void StartCondition(char[] hiddenLettersStart)
+        static void HideWord(char[] hiddenLettersStart)
         {
             for (int i = 0; i < hiddenLettersStart.Length; i++)
             {
@@ -194,5 +206,5 @@ namespace Hangman
 // (7) The incorrect letters the player has guessed, should be put inside a StringBuilder and presented to the player after each guess
 // (3) The correct letters should be put inside a char array. Unrevealed letters need to be represented by a lower dash(_).
 
-// (optional) You unit tests need to have at least 50% coverage.
+// (X) (optional) You unit tests need to have at least 50% coverage.
 // (optional) Read in the words from a text file with Comma-separated values and then store them in an array or list of Strings.
