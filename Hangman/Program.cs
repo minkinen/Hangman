@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.IO;
 
 namespace Hangman
 {
@@ -6,14 +7,16 @@ namespace Hangman
     {
         static void Main()
         {
-            bool runGame = true;
-            while (runGame)
-            {
-                runGame = GameDisplay();
-            }
+                // Words in an array of strings
+                string[] words = GetWords();
+                bool runGame = true;
+                while (runGame)
+                {
+                    runGame = GameDisplay(words);
+                }
         }
 
-        private static bool GameDisplay()
+        private static bool GameDisplay(string[] words)
         {
             PlayOrQuitText();
             string playOrQuit = (Console.ReadLine().ToUpper());
@@ -27,8 +30,6 @@ namespace Hangman
             }
             if (playOrQuit == "P")
             {
-                // Words in an array of strings
-                string[] words = { "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" };
 
                 // The secret word randomly chosen from an array of Strings
                 Random randomNumber = new Random();
@@ -40,7 +41,7 @@ namespace Hangman
                 char[] hiddenLetters = new char[hiddenWordLength];
 
                 // Unrevealed letters represented by a lower dash(_).
-                HideWord(hiddenLetters);
+                HideWord(hiddenLetters, hiddenWord);
 
                 // The incorrect letters the player has guessed, should be put inside a StringBuilder and presented to the player after each guess
                 StringBuilder flunkedLetters = new StringBuilder();
@@ -119,7 +120,6 @@ namespace Hangman
 
         static void GameText(string hiddenWord, char[] hiddenLetters, StringBuilder flunkedLetters, int usedGuesses)
         {
-            Console.WriteLine(hiddenWord);
             Console.WriteLine("");
             Console.WriteLine(" Used guesses: " + usedGuesses + " out of 10.");
             Console.WriteLine("");
@@ -185,12 +185,49 @@ namespace Hangman
             }
         }
 
-        static void HideWord(char[] hiddenLettersStart)
+        static void HideWord(char[] hiddenLettersStart, string hiddenWord)
         {
-            for (int i = 0; i < hiddenLettersStart.Length; i++)
+            int i = 0;
+            foreach (var hiddenWordLetter in hiddenWord)
             {
-                hiddenLettersStart[i] = '_';
+                
+                if ((hiddenWordLetter == ' ') || ('-' == hiddenWordLetter) || ('.' == hiddenWordLetter) || ('\'' == hiddenWordLetter))
+                {
+                    
+                    hiddenLettersStart[i] = hiddenWordLetter;
+                }
+                else
+                {
+                    hiddenLettersStart[i] = '_';
+                }
+                i++;
             }
+        }
+
+        static string[] GetWords()
+        {
+            string[] weekDays = { "GAUTAMA BUDDHA", "THALES", "ANAXIMANDER", "PYTHAGORAS", "CONFUCIUS", "HERACLITUS", "PARMENIDES", "EMPEDOCLES", "SOCRATES", "DEMOCRITUS", "PLATO", "ARISTOTLE", "DIOGENES"
+            , "PYRRHON OF ELIS", "EPICURUS", "ANTISTHENES", "SUN TZU", "XENOFANES", "MARCUS AURELIUS", "YAQUB IBN ISHAQ AS-SABAH AL-KINDI", "SAINT THOMAS AQUINAS", "WILLIAM OF OCKHAM", "NICCOLO MACHIAVELLI"
+            , "FRANCIS BACON", "RENÉ DESCARTES", "JOHN LOCKE", "BENEDICT DE SPINOZA", "VOLTAIRE", "JEAN-JACQUES ROUSSEAU", "IMMANUEL KANT", "GEORG WILHELM FRIEDRICH HEGEL", "KARL MARX", "FRIEDRICH NIETZSCHE"
+            , "MIKHAIL BAKUNIN", "BERTRAND RUSSEL", "NOAM CHOMSKY"};
+            if (System.IO.File.Exists(@"words.txt"))
+            {    
+                string[] uploadedWordCollection = System.IO.File.ReadAllLines(@"words.txt");
+                if (uploadedWordCollection != null && uploadedWordCollection.Length != 0)
+                {
+                    uploadedWordCollection = Array.ConvertAll(uploadedWordCollection, d => d.ToUpper());
+                    Console.WriteLine("");
+                    Console.WriteLine(" A selection of famous fictinonal characters have been uploaded from a words.txt file.\n");
+                    Console.WriteLine(" Good luck!");
+                    Console.WriteLine("");
+                    return uploadedWordCollection;
+                }
+            }
+            Console.WriteLine("");
+            Console.WriteLine(" There is no words.txt file with any text.\n");
+            Console.WriteLine(" Using the default option instead. With the theme philosophers.");
+            Console.WriteLine("");
+            return weekDays;
         }
     }
 }
@@ -207,4 +244,4 @@ namespace Hangman
 // (3) The correct letters should be put inside a char array. Unrevealed letters need to be represented by a lower dash(_).
 
 // (X) (optional) You unit tests need to have at least 50% coverage.
-// (optional) Read in the words from a text file with Comma-separated values and then store them in an array or list of Strings.
+// (X) (optional) Read in the words from a text file with Comma-separated values and then store them in an array or list of Strings.
