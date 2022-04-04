@@ -188,15 +188,15 @@ namespace Hangman
         {
             // Gets the first 32 characters from theme into a substring in order for the text to not go past the hanging G in the graphics.
             string shortTheme;
-            if (theme.Length > 32)
+            if (theme.Length > 31)
             {
-                shortTheme = theme.Substring(0, 32);
+                shortTheme = theme.Substring(0, 30);
             }
             else
             {
                 shortTheme = theme;
             }
-            string spacingAfterShortTheme = new string(' ', 32 - theme.Length);
+            string spacingAfterShortTheme = new string(' ', 30 - theme.Length);
             string spacingAfterFlunked = new string(' ', 32 - flunkedLetters.Length);
             bool spacingLengthDigits = secretWord.Length > 9;
             bool spacingHiddenDigits = hiddenLetters > 9;
@@ -215,20 +215,20 @@ namespace Hangman
             Console.WriteLine(@" \__\/  \:\/:\__\/  \:\/:\__\/  |:|/:/   (|      \__\/'  ~~/:\__\/  \:\/:\__\/  |:|/:/");
             Console.WriteLine(@"      \__\::/     \__\::/    |  |:/:/    |)            /  /:/     \__\::/    |  |:/:/ ");
             Console.WriteLine(@"      /  /:/      /  /:/     |_ |::/     (|           /  /:/      /  /:/     |_ |::/  ");
-            Console.WriteLine(@"     /__/:/      /__/:/      /__/:/      |)          /__/:/      /__/:/      /__/:/   ");
-            Console.WriteLine(@"     \__\/       \__\/       \__\/       (|          \__\/       \__\/       \__\/    ");
-            Console.WriteLine(@"                                         |)__ ");
-            Console.WriteLine(@"                                         /  /\");
-            Console.WriteLine(" Theme: " + shortTheme + spacingAfterShortTheme + @"/  /::\                        " + hangingGraphics[0][flunkedLetters.Length]);
-            Console.WriteLine(@"                                       /  /:/\:\                       " + hangingGraphics[1][flunkedLetters.Length]);
-            Console.WriteLine(" Length:   " + (spacingLengthDigits ? "" : " ") + secretWord.Length + @"                         /  /:/  \:\                      " + hangingGraphics[2][flunkedLetters.Length]);
-            Console.WriteLine(" Hidden:   " + (spacingHiddenDigits ? "" : " ") + hiddenLetters + @"                        /__/:/_\_ \:\                     " + hangingGraphics[3][flunkedLetters.Length]);
-            Console.WriteLine(" Blank:    " + (spacingBlankDigits ? "" : " ") + spaceTally + @"                        \  \:\__/\_\/                     " + hangingGraphics[4][flunkedLetters.Length]);
-            Console.WriteLine(" Revealed: " + (spacingRevealedDigits ? "" : " ") + visibleCharacters + @"                         \  \:\ \:\                       " + hangingGraphics[5][flunkedLetters.Length]);
-            Console.WriteLine(@"                                       \  \:\/:/                       " + hangingGraphics[6][flunkedLetters.Length]);
-            Console.WriteLine(" Failed guesses: 10 out of 10." + @"          \  \::/                        " + hangingGraphics[7][flunkedLetters.Length]);
-            Console.WriteLine(@"                                         \__\/ A M E                   " + hangingGraphics[8][flunkedLetters.Length]);
-            Console.WriteLine(" Strucked out letters: " + flunkedLetters + spacingAfterFlunked + "O V E R !       " + hangingGraphics[9][flunkedLetters.Length]);
+            Console.WriteLine(@"     /__/:/      /__/:/      /__/:/      |)__        /__/:/      /__/:/      /__/:/   ");
+            Console.WriteLine(@"     \__\/       \__\/       \__\/       /  /\       \__\/       \__\/       \__\/    ");
+            Console.WriteLine(@"                                        /  /::\         ");
+            Console.WriteLine(@"                                       /  /:/\:\           ");
+            Console.WriteLine(" Theme: " + shortTheme + spacingAfterShortTheme + @"/  /:/  \:\                      " + hangingGraphics[0][flunkedLetters.Length]);
+            Console.WriteLine(@"                                     /__/:/_\_ \:\                     " + hangingGraphics[1][flunkedLetters.Length]);
+            Console.WriteLine(" Length:   " + (spacingLengthDigits ? "" : " ") + secretWord.Length + @"                        \  \:\__/\_\/                     " + hangingGraphics[2][flunkedLetters.Length]);
+            Console.WriteLine(" Hidden:   " + (spacingHiddenDigits ? "" : " ") + hiddenLetters + @"                         \  \:\ \:\                       " + hangingGraphics[3][flunkedLetters.Length]);
+            Console.WriteLine(" Blank:    " + (spacingBlankDigits ? "" : " ") + spaceTally + @"                          \  \:\/:/                       " + hangingGraphics[4][flunkedLetters.Length]);
+            Console.WriteLine(" Revealed: " + (spacingRevealedDigits ? "" : " ") + visibleCharacters + @"                           \  \::/                        " + hangingGraphics[5][flunkedLetters.Length]);
+            Console.WriteLine(@"                                         \__\/ A M E                   " + hangingGraphics[6][flunkedLetters.Length]);
+            Console.WriteLine(" Failed guesses: 10 out of 10." + @"                        O V E R !        " + hangingGraphics[7][flunkedLetters.Length]);
+            Console.WriteLine(@"                                                                       " + hangingGraphics[8][flunkedLetters.Length]);
+            Console.WriteLine(" Strucked out letters: " + flunkedLetters + spacingAfterFlunked + "                " + hangingGraphics[9][flunkedLetters.Length]);
             Console.WriteLine("");
             Console.Write(spacingSecretWord ? " Didn't get 'em all " : " You were not able to get the whole wording:  ");
             Console.WriteLine(secretLetters);
