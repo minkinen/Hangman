@@ -52,9 +52,9 @@ namespace Hangman
                 int otherTally = secretWord.Length - letterTally - spaceTally;
 
                 // Unrevealed letters represented by a lower dash(_).
-                HideWord(secretLetters, secretWord, letterTally, spaceTally);
+                HideWord(secretLetters, secretWord, ref letterTally, ref spaceTally);
                 int hiddenLetters = letterTally;
-                int visibleCharacters = letterTally - hiddenLetters - spaceTally;
+                int visibleCharacters = letterTally - hiddenLetters;
 
                 // The incorrect letters the player has guessed, should be put inside a StringBuilder and presented to the player after each guess
                 StringBuilder flunkedLetters = new StringBuilder();
@@ -87,7 +87,7 @@ namespace Hangman
                                     if (secretWord.Contains(inputGuess))
                                     {
                                         // If player guess a letter that occurs in the word, the program update by inserting the letter in the correct position(s).
-                                        GuessLetter(char.Parse(inputGuess), secretWord, secretLetters, hiddenLetters, visibleCharacters);
+                                        GuessLetter(char.Parse(inputGuess), secretWord, secretLetters, ref hiddenLetters, ref visibleCharacters);
                                         usedGuesses--;
                                     }
                                     else
@@ -309,7 +309,7 @@ namespace Hangman
             return hangingGraphics;
         }
 
-        static void GuessLetter(char inputGuess, string secretWord, char[] secretLetters, int hiddenLetters, int visibleCharacters)
+        static void GuessLetter(char inputGuess, string secretWord, char[] secretLetters, ref int hiddenLetters, ref int visibleCharacters)
         {
             // Replaceses the hidden letter (_) with the correct letter of the secret word if the player guessed correct.
             int i = 0;
@@ -337,7 +337,7 @@ namespace Hangman
             }
         }
 
-        static int HideWord(char[] secretLettersStart, string secretWord, int letterTally, int spaceTally)
+        static int HideWord(char[] secretLettersStart, string secretWord, ref int letterTally, ref int spaceTally)
         {
             // Hides all english letters. Also tally the count of English letters and the count of spaces in this loop.
             Regex englishLetters = new Regex(@"[a-zA-Z]");
@@ -361,7 +361,6 @@ namespace Hangman
                 i++;
             }      
             return letterTally;
-            return spaceTally;
         }
 
         static string[] GetWords(ref string theme)
